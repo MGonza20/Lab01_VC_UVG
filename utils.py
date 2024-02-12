@@ -1,0 +1,61 @@
+import numpy as np
+import cv2 as cv
+
+image_path = 'images/microscope.png'
+imagen_color = cv.imread(image_path)
+imagen_gris = cv.cvtColor(imagen_color, cv.COLOR_BGR2GRAY)
+_, imagen_binaria = cv.threshold(imagen_gris, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+
+
+
+def get_neighbors(row, column, labels):
+    neighbors = []
+    if row > 0: neighbors.append(labels[row - 1][column])
+    if column > 0: neighbors.append(labels[row][column - 1])
+    return [n for n in neighbors if n > 0]
+
+def update_linked_labels(linked):
+    """ Actualizacion de etiquetas para que que 
+    todas las etiquetas apunten a la etiqueta raiz """
+    for key in linked.keys():
+        while linked[key] != linked[linked[key]]:
+            linked[key] = linked[linked[key]]
+
+
+def two_pass_labeling(binary_image):
+
+    # Inicializacion
+    linked = {}
+    next_label = 1
+    rows_q, cols_q = binary_image.shape
+    labels = np.zeros(imagen_binaria.shape, dtype=np.uint32)
+
+    # Primera pasada
+    for row in range(rows_q):
+        for col in range(cols_q):
+            if binary_image[row][col] == 255:
+
+                neighbors = get_neighbors(row, col, labels)
+                if not neighbors:
+                    linked[next_label] = next_label
+                    labels[row][col] = next_label
+                    next_label += 1
+                else:
+                    min_label = min(neighbors)
+                    labels[row][col] = min_label
+                    for n in neighbors:
+                        if n != min_label: linked[n] = min_label
+
+    update_linked_labels(linked)
+
+    # Segunda pasada
+    for row in range(rows_q):
+        for col in range(cols_q):
+            if labels[row][col] > 0: labels[row][col] = linked[labels[row][col]]
+
+    return labels
+
+
+labeled_image = two_pass_labeling(imagen_binaria)
+labels = np.unique(labeled_image)
+print(len(labels))
