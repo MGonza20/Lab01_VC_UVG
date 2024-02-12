@@ -56,9 +56,6 @@ def two_pass_labeling(binary_image):
     return labels
 
 
-labeled_image = two_pass_labeling(imagen_binaria)
-labels = np.unique(labeled_image)
-
 def smallest_component(labeled_image):
     labels, labels_q = np.unique(labeled_image, return_counts=True)
     component_sizes = dict(zip(labels, labels_q))
