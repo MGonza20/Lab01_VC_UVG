@@ -58,4 +58,16 @@ def two_pass_labeling(binary_image):
 
 labeled_image = two_pass_labeling(imagen_binaria)
 labels = np.unique(labeled_image)
-print(len(labels))
+
+def smallest_component(labeled_image):
+    labels, labels_q = np.unique(labeled_image, return_counts=True)
+    component_sizes = dict(zip(labels, labels_q))
+    
+    if 0 in component_sizes: del component_sizes[0]
+    
+    if component_sizes:
+        min_size_label = min(component_sizes, key=component_sizes.get)
+        min_size = component_sizes[min_size_label]
+        return f"La componente conexa de menor tamaño es la etiqueta {min_size_label} con {min_size} píxeles."
+    else:
+        return None
