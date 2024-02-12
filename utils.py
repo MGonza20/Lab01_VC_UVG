@@ -1,12 +1,6 @@
 import numpy as np
 import cv2 as cv
 
-image_path = 'images/microscope.png'
-imagen_color = cv.imread(image_path)
-imagen_gris = cv.cvtColor(imagen_color, cv.COLOR_BGR2GRAY)
-_, imagen_binaria = cv.threshold(imagen_gris, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
-
-
 
 def get_neighbors(row, column, labels):
     neighbors = []
@@ -28,7 +22,7 @@ def two_pass_labeling(binary_image):
     linked = {}
     next_label = 1
     rows_q, cols_q = binary_image.shape
-    labels = np.zeros(imagen_binaria.shape, dtype=np.uint32)
+    labels = np.zeros(binary_image.shape, dtype=np.uint32)
 
     # Primera pasada
     for row in range(rows_q):
