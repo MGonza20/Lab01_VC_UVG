@@ -50,23 +50,17 @@ def two_pass_labeling(binary_image):
     return labels
 
 
-def smallest_component(labeled_image):
+def get_component_size(labeled_image, size):
     labels, labels_q = np.unique(labeled_image, return_counts=True)
     component_sizes = dict(zip(labels, labels_q))
     
     if 0 in component_sizes: del component_sizes[0]
-    
-    if component_sizes:
+    if size.lower() == 'small':
         min_size_label = min(component_sizes, key=component_sizes.get)
         min_size = component_sizes[min_size_label]
-        return f"La componente conexa de menor tamaño es la etiqueta {min_size_label} con {min_size} unidades."
+        image = np.where(labeled_image == min_size_label, 255, 0)
+        return f"La componente conexa de menor tamaño es la etiqueta {min_size_label} con {min_size} unidades.", image
 
-
-def largest_component(labeled_image):
-    labels, labels_q = np.unique(labeled_image, return_counts=True)
-    component_sizes = dict(zip(labels, labels_q))
-    
-    if 0 in component_sizes: del component_sizes[0]
-    
-    if component_sizes: max_size_label = max(component_sizes, key=component_sizes.get)
-    return np.where(labeled_image == max_size_label, 255, 0)
+    elif size.lower() == 'large':
+        max_size_label = max(component_sizes, key=component_sizes.get)
+        return np.where(labeled_image == max_size_label, 255, 0)
