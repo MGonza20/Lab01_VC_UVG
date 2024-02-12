@@ -1,7 +1,7 @@
 import numpy as np
 import cv2 as cv
 
-
+# funciones auxiliares
 def get_neighbors(row, column, labels):
     neighbors = []
     if row > 0: neighbors.append(labels[row - 1][column])
@@ -60,5 +60,13 @@ def smallest_component(labeled_image):
         min_size_label = min(component_sizes, key=component_sizes.get)
         min_size = component_sizes[min_size_label]
         return f"La componente conexa de menor tamaño es la etiqueta {min_size_label} con {min_size} píxeles."
-    else:
-        return None
+
+
+def largest_component(labeled_image):
+    labels, labels_q = np.unique(labeled_image, return_counts=True)
+    component_sizes = dict(zip(labels, labels_q))
+    
+    if 0 in component_sizes: del component_sizes[0]
+    
+    if component_sizes: max_size_label = max(component_sizes, key=component_sizes.get)
+    return np.where(labeled_image == max_size_label, 255, 0)
