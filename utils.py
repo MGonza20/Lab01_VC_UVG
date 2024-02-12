@@ -50,6 +50,7 @@ def two_pass_labeling(binary_image):
     return labels
 
 
+
 def get_component_size(labeled_image, size):
     labels, labels_q = np.unique(labeled_image, return_counts=True)
     component_sizes = dict(zip(labels, labels_q))
