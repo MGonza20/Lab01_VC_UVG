@@ -59,8 +59,12 @@ def get_component_size(labeled_image, size):
         min_size_label = min(component_sizes, key=component_sizes.get)
         min_size = component_sizes[min_size_label]
         image = np.where(labeled_image == min_size_label, 255, 0)
-        return f"La componente conexa de menor tamaño es la etiqueta {min_size_label} con {min_size} unidades.", image
+        info = f"La componente conexa de menor tamaño es la etiqueta {min_size_label} con {min_size} unidades."
 
     elif size.lower() == 'large':
         max_size_label = max(component_sizes, key=component_sizes.get)
-        return np.where(labeled_image == max_size_label, 255, 0)
+        max_size = component_sizes[max_size_label]
+        image = np.where(labeled_image == max_size_label, 255, 0)
+        info = f"La componente conexa de mayor tamaño es la etiqueta {max_size_label} con {max_size} unidades."
+
+    return info, image
