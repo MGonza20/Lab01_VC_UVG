@@ -8,18 +8,19 @@ def get_neighbors(row, column, labels):
     if column > 0: neighbors.append(labels[row][column - 1])
     return [n for n in neighbors if n > 0]
 
-def update_linked_labels(linked):
+def update_eq_labels(eq):
     """ Actualizacion de etiquetas para que que 
     todas las etiquetas apunten a la etiqueta raiz """
-    for key in linked.keys():
-        while linked[key] != linked[linked[key]]:
-            linked[key] = linked[linked[key]]
+    for key in eq.keys():
+        while eq[key] != eq[eq[key]]:
+            eq[key] = eq[eq[key]]
 
 
+# Referencia: https://en.wikipedia.org/wiki/Connected-component_labeling
 def two_pass_labeling(binary_image):
 
     # Inicializacion
-    linked = {}
+    eq = {}
     next_label = 1
     rows_q, cols_q = binary_image.shape
     labels = np.zeros(binary_image.shape, dtype=np.uint32)
@@ -31,21 +32,21 @@ def two_pass_labeling(binary_image):
 
                 neighbors = get_neighbors(row, col, labels)
                 if not neighbors:
-                    linked[next_label] = next_label
+                    eq[next_label] = next_label
                     labels[row][col] = next_label
                     next_label += 1
                 else:
                     min_label = min(neighbors)
                     labels[row][col] = min_label
                     for n in neighbors:
-                        if n != min_label: linked[n] = min_label
+                        if n != min_label: eq[n] = min_label
 
-    update_linked_labels(linked)
+    update_eq_labels(eq)
 
     # Segunda pasada
     for row in range(rows_q):
         for col in range(cols_q):
-            if labels[row][col] > 0: labels[row][col] = linked[labels[row][col]]
+            if labels[row][col] > 0: labels[row][col] = eq[labels[row][col]]
 
     return labels
 
